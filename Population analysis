@@ -1,0 +1,121 @@
+#Population analysis in Africa
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('C:\\Users\\hp\\Documents\\Jupyter files\\Countries.csv')
+df.rename(columns= {'Arable (%)' : 'Arable land (%)'}, inplace=True)
+print(df)
+
+
+df['Coastline (coast/area ratio)']= df['Coastline (coast/area ratio)'].str.replace(',', '.', case=False)
+df['Infant mortality (per 1000 births)']= df['Infant mortality (per 1000 births)'].str.replace(',', '.', case=False)
+df['Literacy (%)']= df['Literacy (%)'].str.replace(',', '.', case=False)
+df['Phones (per 1000)']= df['Phones (per 1000)'].str.replace(',', '.', case=False)
+df['Arable land (%)']= df['Arable land (%)'].str.replace(',', '.', case=False)
+df['Net migration']= df['Net migration'].str.replace(',', '.', case=False)
+df['Pop. Density (per sq. mi.)']= df['Pop. Density (per sq. mi.)'].str.replace(',', '.', case=False)
+df['Crops (%)']= df['Crops (%)'].str.replace(',', '.', case=False)
+df['Other (%)']= df['Other (%)'].str.replace(',', '.', case=False)
+df['Birthrate']= df['Birthrate'].str.replace(',', '.', case=False)
+df['Deathrate']= df['Deathrate'].str.replace(',', '.', case=False)
+df['Agriculture']= df['Agriculture'].str.replace(',', '.', case=False)
+df['Industry']= df['Industry'].str.replace(',', '.', case=False)
+df['Service']= df['Service'].str.replace(',', '.', case=False)
+
+
+df['Region']=df['Region'].replace({'C.W. OF IND. STATES ': 'EASTERN EUROPE'})
+df['Region']=df['Region'].replace({'ASIA (EX. NEAR EAST)         ' : 'MIDDLE EAST'})
+df['Region']=df['Region'].replace({'NEAR EAST                          ' : 'MIDDLE EAST'})
+df['Region']=df['Region'].replace({'SUB-SAHARAN AFRICA                 ': 'SUB-SAHARAN AFRICA'})
+
+
+ def capcountry(Country):
+        return Country.upper()
+
+df['Country'].apply(capcountry)
+
+
+filt = (df['Region'] == 'SUB-SAHARAN AFRICA')
+Africa= df.loc[filt]
+Africa.head(10)
+
+Africa.to_csv('C:\\Users\\hp\\Documents\\Jupyter files\\Africa.csv')
+
+
+Over_median=df[Africa]['Population'].median()
+
+
+country = df[Africa]['Country'].head(25)
+pop = df[Africa]['Population'].head(25)
+size =df[Africa]['Area (sq. mi.)'].head(25)
+
+plt.plot(country, pop, color = 'g', linestyle = '--', label = 'pop')
+
+plt.plot(country,size, color = 'm', linestyle = '--', label = 'size')
+
+plt.fill_between(country, pop,size,where = (pop >size),
+                 interpolate = True, alpha = 0.25, label=  'Above avg')
+plt.fill_between(country, pop,size,where = (pop <= size),
+                 interpolate = True, alpha = 0.25, label = 'Below avg')
+
+plt.title('Population per square kilometer')
+plt.xlabel('country')
+plt.ylabel('Pop/area')
+
+plt.tight_layout()
+
+plt.show()
+
+
+country = df[Africa]['Country'].head(15)
+Lit = df[Africa]['Infant mortality (per 1000 births)'].head(15)
+bins = [10, 20,30,40, 50,60,70,80,90,100,110,120]
+
+
+plt.hist(Lit, bins = bins, edgecolor = 'white')
+
+plt.title('StartUp')
+plt.xlabel('Mine')
+plt.ylabel('Gbez')
+
+
+plt.tight_layout()
+
+plt.show()   
+
+
+df[Africa].replace('NaN', 0,  inplace = True)
+df[Africa]
+
+
+den= df[Africa]['Population'].head(30)
+Litr = df[Africa]['Coastline (coast/area ratio)'].head(30)
+beach = [den/Litr for den,Litr in zip(den, Litr)] #Taking the ratio of the population d
+
+print(beach)
+
+plt.style.use('seaborn')
+
+den= df[Africa]['Population'].head(25)
+Litr = df[Africa]['Coastline (coast/area ratio)'].head(25)
+beach = df[Africa]['GDP ($ per capita)'].head(25) #Showing the relationship between coastline availability and population concentration
+
+plt.scatter(den,Litr,s=100, c =beach,cmap = 'cool', edgecolor = 'blue', linewidth = 1,
+            alpha = 0.75)
+
+cbar = plt.colorbar()
+cbar.set_label('Chillz')
+
+
+
+plt.title('BEACHES')
+plt.xlabel('Population density')
+plt.ylabel('Coastline')
+
+
+plt.tight_layout()
+
+plt.show()
+
+
