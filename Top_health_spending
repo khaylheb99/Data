@@ -1,0 +1,80 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+df = pd.read_csv('C:\\Users\\KAY\\Documents\\Data Science\\Datasets\\World Bank Indicators.csv') #bringing in the dataset to be used
+df
+df.shape
+df.info
+
+Late = ['2010-07-01']
+filt= df['Date'].isin(Late)
+
+df[filt]
+try:
+    latest = df[filt]
+    print (latest)
+except TypeError as e:
+    print (e)
+    print ('None object')
+
+Recent = (df['Date'] == '01/07/2010')   #getting the newest available data from the dataset
+Recent=df[Recent] 
+
+Recent.shape
+pd.set_option('display.max_column', 20)   #displaying the full data
+pd.set_option('display.max_row', 214)   
+Recent
+
+#Have to remove the commas before changing the datatype from string to floats
+
+Recent['Transit: Railways, (million passenger-km)'] = Recent['Transit: Railways, (million passenger-km)'].str.replace(',', '', case= False)
+Recent['Business: Mobile phone subscribers'] = Recent['Business: Mobile phone subscribers'].str.replace(',', '', case= False)
+Recent['Health: Health expenditure per capita (current US$)'] = Recent['Health: Health expenditure per capita (current US$)'].str.replace(',', '', case= False)
+Recent['Population: Total (count)'] = Recent['Population: Total (count)'].str.replace(',', '', case= False)
+Recent['Population: Urban (count)'] = Recent['Population: Urban (count)'].str.replace(',', '', case= False)
+Recent['Finance: GDP (current US$)'] = Recent['Finance: GDP (current US$)'].str.replace(',', '', case= False)
+Recent['Finance: GDP per capita (current US$)'] = Recent['Finance: GDP per capita (current US$)'].str.replace(',', '', case= False)
+
+
+#changing datatype to floats
+
+Recent['Population: Total (count)'] = Recent['Population: Total (count)'].astype(float)
+Recent['Population: Urban (count)'] = Recent['Population: Urban (count)'].astype(float)
+Recent['Population: Ages 0-14 (% of total)'] = Recent['Population: Ages 0-14 (% of total)'].astype(float)
+Recent['Transit: Railways, (million passenger-km)'] = Recent['Transit: Railways, (million passenger-km)'].astype(float)
+Recent['Business: Mobile phone subscribers'] = Recent['Business: Mobile phone subscribers'].astype(float)
+Recent['Transit: Passenger cars (per 1,000 people)'] = Recent['Transit: Passenger cars (per 1,000 people)'].astype(float)
+Recent['Business: Internet users (per 100 people)'] = Recent['Business: Internet users (per 100 people)'].astype(float)
+Recent['Health: Mortality, under-5 (per 1,000 live births)'] = Recent['Health: Mortality, under-5 (per 1,000 live births)'].astype(float)
+Recent['Health: Health expenditure per capita (current US$)'] = Recent['Health: Health expenditure per capita (current US$)'].astype(float)
+Recent['Health: Health expenditure, total (% GDP)'] = Recent['Health: Health expenditure, total (% GDP)'].astype(float)
+Recent['Population:: Birth rate, crude (per 1,000)'] = Recent['Population:: Birth rate, crude (per 1,000)'].astype(float)
+Recent['Finance: GDP (current US$)'] = Recent['Finance: GDP (current US$)'].astype(float)
+Recent['Finance: GDP per capita (current US$)'] = Recent['Finance: GDP per capita (current US$)'].astype(float)
+
+Recent.sort_values(by='Population: Total (count)', ascending = False).tail(20)
+
+Recent.to_excel('C:\\Users\\KAY\\Documents\\Data Science\\Datasets\\Latest co.xlsx')  #exporting to excel file format
+
+Top_health = Recent.sort_values(by=['Health: Health expenditure per capita (current US$)'], ascending = False).head(50)
+Top_health
+#creating a new table to show the top 50 spenders on healthcare
+
+country = Top_health['Country Name'].head(10)
+health_fund = Top_health['Health: Health expenditure per capita (current US$)'].head(10)
+#plotting a barhistogram to visualize and compare the top 10 healthcare spenders 
+
+plt.style.use('seaborn-dark-palette')
+plt.barh(country,health_fund, color = 'g')
+plt.title('Top health fundings')
+plt.xlabel('country')
+plt.ylabel('health_fund')
+
+plt.tight_layout()
+
+plt.show()
+
+
+
